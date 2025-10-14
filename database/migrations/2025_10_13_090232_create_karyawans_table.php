@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('karyawans', function (Blueprint $table) {
+        Schema::create('karyawan', function (Blueprint $table) {
             $table->id();
             $table->string('nik')->unique();
             $table->string('nama');
-            $table->string('jabatan')->nullable();
-            $table->string('departemen')->nullable();
-            $table->date('tanggal_masuk')->nullable();
+            $table->enum('jenis_kelamin', ['L', 'P'])->nullable();
+            $table->string('pendidikan_terakhir')->nullable();
+            $table->string('lama_bekerja')->nullable();
+            $table->string('jumlah_kehadiran')->nullable();
+            $table->integer('hasil_penilaian_kinerja_sebelumnya')->nullable();
+            $table->text('jabatan')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('karyawans');
+        Schema::dropIfExists('karyawan');
     }
 };

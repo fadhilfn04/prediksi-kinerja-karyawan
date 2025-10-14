@@ -41,6 +41,12 @@ class AuthenticatedSessionController extends Controller
             'last_login_ip' => $request->getClientIp()
         ]);
 
+        if ($request->user()->role === 'admin') {
+            return redirect()->route('dashboard');
+        } else {
+            return redirect()->route('user.prediction');
+        }
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

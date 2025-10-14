@@ -16,6 +16,18 @@ Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('dashboard'));
 });
 
+// Home > Dashboard > Data Karyawan
+Breadcrumbs::for('karyawan.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Data Karyawan', route('karyawan.index'));
+});
+
+// Home > Dashboard > Training Model
+Breadcrumbs::for('training.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Training Model', route('training.index'));
+});
+
 // Home > Dashboard > User Management
 Breadcrumbs::for('user-management.index', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

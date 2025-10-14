@@ -5,6 +5,10 @@ use App\Http\Controllers\Apps\RoleManagementController;
 use App\Http\Controllers\Apps\UserManagementController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\KriteriaController;
+use App\Http\Controllers\PrediksiController;
+use App\Http\Controllers\TrainingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +27,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('karyawan', KaryawanController::class);
+    // Route::resource('training', TrainingController::class);
+    Route::resource('prediksi', PrediksiController::class);
+
+    Route::prefix('training')->group(function () {
+        Route::get('/', [TrainingController::class, 'index'])->name('training.index');
+        Route::get('/ambil-data', [TrainingController::class, 'ambilData']);
+        Route::get('/return-data', [TrainingController::class, 'returnData']);
+        Route::get('/proses', [TrainingController::class, 'proses']);
+        Route::get('/simpan', [TrainingController::class, 'simpan']);
+
+        Route::get('/predict', function () {
+            return view('pages.training.predict');
+        })->name('training.predict.form');
+
+        Route::post('/predict', [TrainingController::class, 'predict'])->name('training.predict');
+    });
+
+    Route::get('prediksi', [PrediksiController::class, 'index'])->name('prediksi.index');
+    Route::get('prediksi/create', [PrediksiController::class, 'create'])->name('prediksi.create');
+    Route::post('prediksi', [PrediksiController::class, 'store'])->name('prediksi.store');
+    Route::get('prediksi/{prediksi}', [PrediksiController::class, 'show'])->name('prediksi.show');
+    Route::delete('prediksi/{prediksi}', [PrediksiController::class, 'destroy'])->name('prediksi.destroy');
+
+    Route::resource('kriteria', KriteriaController::class);
 
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);

@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('prediksis', function (Blueprint $table) {
+        Schema::create('prediksi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('karyawan_id')->constrained('karyawans')->onDelete('cascade');
-            $table->string('label_prediksi');
-            $table->float('skor_total')->nullable();
+            $table->integer('id_karyawan');
+            $table->string('jenis_kelamin');
+            $table->string('pendidikan_terakhir');
+            $table->integer('lama_bekerja');
+            $table->integer('jumlah_kehadiran');
+            $table->string('jabatan');
+            $table->string('prediksi');
             $table->timestamps();
         });
     }
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prediksis');
+        Schema::dropIfExists('prediksi');
     }
 };
