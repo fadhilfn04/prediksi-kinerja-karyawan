@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Karyawan;
+use App\Models\Prediksi;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -32,22 +34,27 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        $request->authenticate();
+        $user = $request->authenticate();
 
-        $request->session()->regenerate();
-
-        $request->user()->update([
-            'last_login_at' => Carbon::now()->toDateTimeString(),
-            'last_login_ip' => $request->getClientIp()
-        ]);
-
-        if ($request->user()->role === 'admin') {
-            return redirect()->route('dashboard');
-        } else {
-            return redirect()->route('user.prediction');
+        if ($user) {
+            $request->session()->regenerate();
+            $user->update([
+                'last_login_at' => now(),
+                'last_login_ip' => $request->getClientIp()
+            ]);
+            return redirect()->intended(RouteServiceProvider::HOME);
         }
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $nik = $request->input('login');
+        $karyawan = Karyawan::where('nik', $nik)->first();
+        $prediksi = Prediksi::where('karyawan_id', $karyawan->id)->latest('created_at')->first();
+
+        return response()->json([
+            'success' => true,
+            'type' => 'karyawan',
+            'karyawan' => $karyawan,
+            'prediksi' => $prediksi
+        ]);
     }
 
     /**

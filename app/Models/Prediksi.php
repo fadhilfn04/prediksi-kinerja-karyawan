@@ -12,7 +12,7 @@ class Prediksi extends Model
     protected $table = 'prediksi';
 
     protected $fillable = [
-        'id_karyawan',
+        'karyawan_id',
         'jenis_kelamin',
         'pendidikan_terakhir',
         'lama_bekerja',

@@ -13,16 +13,16 @@
 
             <div class="card-toolbar">
                 <button id="btnAmbil" class="btn btn-light-primary me-2">
-                    {!! getIcon('database', 'fs-2') !!} Ambil Data
+                    Ambil Data
                 </button>
                 <button id="btnReturn" class="btn btn-light-info me-2">
-                    {!! getIcon('eye', 'fs-2') !!} Return Data
+                    Return Data
                 </button>
                 <button id="btnProses" class="btn btn-light-warning me-2">
-                    {!! getIcon('cog', 'fs-2') !!} Proses Decision Tree
+                    Proses Decision Tree
                 </button>
                 <button id="btnSimpan" class="btn btn-light-success">
-                    {!! getIcon('save', 'fs-2') !!} Simpan Model
+                    Simpan Model
                 </button>
             </div>
         </div>
@@ -64,21 +64,30 @@
                 stepStatus.classList.remove('d-none');
             }
 
+            let trainingDataTable;
+
             function renderTable(data) {
                 tableHead.innerHTML = '';
                 tableBody.innerHTML = '';
 
                 if (!data || data.length === 0) {
                     tableBody.innerHTML = `<tr><td colspan="100%" class="text-center">Tidak ada data</td></tr>`;
-                    return;
+                } else {
+                    const headers = Object.keys(data[0]);
+                    tableHead.innerHTML = `<tr>${headers.map(h => `<th class="text-center">${h}</th>`).join('')}</tr>`;
+
+                    data.forEach(row => {
+                        tableBody.innerHTML += `<tr>${headers.map(h => `<td class="text-center">${row[h]}</td>`).join('')}</tr>`;
+                    });
                 }
 
-                const headers = Object.keys(data[0]);
-                tableHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+                // Destroy previous DataTable instance (jika ada)
+                if ($.fn.DataTable.isDataTable('#training_table')) {
+                    $('#training_table').DataTable().destroy();
+                }
 
-                data.forEach(row => {
-                    tableBody.innerHTML += `<tr>${headers.map(h => `<td>${row[h]}</td>`).join('')}</tr>`;
-                });
+                // Re-init DataTable
+                trainingDataTable = $('#training_table').DataTable();
             }
 
             document.getElementById('btnAmbil').addEventListener('click', () => {

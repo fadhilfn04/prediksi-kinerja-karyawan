@@ -18,11 +18,16 @@
             </div>
         </div>
 
-        <div class="card-body pt-0">
+        <div class="card-body">
+            <div class="d-flex justify-content-end mb-3">
+                <input type="text" id="global_search" class="form-control form-control-sm w-25" placeholder="Cari data...">
+            </div>
+
             <div class="table-responsive">
                 <table class="table align-middle table-row-dashed fs-6 gy-5" id="karyawan_table">
                     <thead>
-                        <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                        <tr class=" text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                            <th class="min-w-100px">No</th>
                             <th class="min-w-100px">NIK</th>
                             <th class="min-w-150px">Nama</th>
                             <th class="min-w-150px">Jenis Kelamin</th>
@@ -35,8 +40,9 @@
                         </tr>
                     </thead>
                     <tbody class="fw-semibold text-gray-600">
-                        @foreach($karyawan as $k)
+                        @foreach($karyawan as $index => $k)
                         <tr>
+                            <td>{{ $index + 1 }}</td>
                             <td>{{ $k->nik }}</td>
                             <td>{{ $k->nama }}</td>
                             <td>{{ $k->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
@@ -60,15 +66,25 @@
                                         data-lama_bekerja="{{ $k->lama_bekerja }}"
                                         data-jumlah_kehadiran="{{ $k->jumlah_kehadiran }}"
                                         data-penilaian="{{ $k->hasil_penilaian_kinerja_sebelumnya }}">
-                                    {!! getIcon('pencil', 'fs-2') !!}
+                                    {{-- {!! getIcon('pencil', 'fs-2') !!} --}}
+                                    <i class="ki-duotone ki-pencil fs-2">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
                                 </button>
 
                                 <!-- Tombol Hapus -->
                                 <form action="{{ route('karyawan.destroy', $k) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-light-danger" onclick="return confirm('Yakin ingin menghapus karyawan ini?')" data-bs-toggle="tooltip" title="Hapus">
-                                        {!! getIcon('trash', 'fs-2') !!}
+                                    <button type="submit" class="btn btn-sm btn-light-danger btn-hapus-karyawan">
+                                        <i class="ki-duotone ki-trash fs-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                            <span class="path4"></span>
+                                            <span class="path5"></span>
+                                        </i>
                                     </button>
                                 </form>
                             </td>
@@ -89,7 +105,10 @@
     @push('scripts')
         <script>
             $(document).ready(function () {
-                $('#karyawan_table').DataTable();
+                var table = $('#karyawan_table').DataTable();
+                $('#global_search').on('keyup', function () {
+                    table.search(this.value).draw();
+                });
 
                 $('.btn-edit-karyawan').on('click', function () {
                     const id = $(this).data('id');
@@ -103,6 +122,26 @@
                     $('#edit_penilaian').val($(this).data('penilaian'));
 
                     $('#formEditKaryawan').attr('action', `/karyawan/${id}`);
+                });
+
+                $('.btn-hapus-karyawan').on('click', function(e){
+                    e.preventDefault();
+                    const form = $(this).closest('form');
+
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus karyawan ini?',
+                        text: "Data yang dihapus tidak bisa dikembalikan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
                 });
             });
         </script>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('prediksi', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_karyawan');
+            $table->integer('karyawan_id')->unsigned();
             $table->string('jenis_kelamin');
             $table->string('pendidikan_terakhir');
             $table->integer('lama_bekerja');

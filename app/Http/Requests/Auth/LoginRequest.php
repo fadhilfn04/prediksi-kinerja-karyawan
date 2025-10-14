@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\Karyawan;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -28,9 +30,18 @@ class LoginRequest extends FormRequest
      */
     public function rules()
     {
+        $login = $this->input('login');
+
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            return [
+                'login' => ['required', 'email'],
+                'password' => ['required', 'string'],
+            ];
+        }
+
         return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'login' => ['required', 'string'],
+            'password' => ['nullable', 'string'],
         ];
     }
 
@@ -43,17 +54,33 @@ class LoginRequest extends FormRequest
      */
     public function authenticate()
     {
-        $this->ensureIsNotRateLimited();
+        $login = $this->input('login');
+        $password = $this->input('password');
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            $credentials = ['email' => $login, 'password' => $password];
+            if (!Auth::attempt($credentials)) {
+                throw ValidationException::withMessages([
+                    'login' => __('Email atau password salah')
+                ]);
+            }
+            return Auth::user();
+        }
 
+        $karyawan = Karyawan::where('nik', $login)->first();
+        if (!$karyawan) {
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'login' => __('NIK tidak ditemukan')
             ]);
         }
 
-        RateLimiter::clear($this->throttleKey());
+        if ($password && (!isset($karyawan->password) || !Hash::check($password, $karyawan->password))) {
+            throw ValidationException::withMessages([
+                'login' => __('Password salah')
+            ]);
+        }
+
+        return null;
     }
 
     /**

@@ -28,6 +28,12 @@ Breadcrumbs::for('training.index', function (BreadcrumbTrail $trail) {
     $trail->push('Training Model', route('training.index'));
 });
 
+// Home > Dashboard > Prediksi Kinerja Karyawan
+Breadcrumbs::for('prediksi.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Prediksi', route('prediksi.index'));
+});
+
 // Home > Dashboard > User Management
 Breadcrumbs::for('user-management.index', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

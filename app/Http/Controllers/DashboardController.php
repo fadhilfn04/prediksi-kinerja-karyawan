@@ -10,21 +10,23 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Statistik karyawan
         $totalKaryawan = Karyawan::count();
 
-        // Status model
         $isModelTrained = Storage::disk('local')->exists('training/model.json');
         $lastTrainingDate = null;
+        $modelAccuracy = null;
 
         if ($isModelTrained) {
             $lastTrainingDate = date('d M Y H:i', Storage::disk('local')->lastModified('training/model.json'));
+
+            if (Storage::disk('local')->exists('training/accuracy.json')) {
+                $accuracyData = json_decode(Storage::disk('local')->get('training/accuracy.json'), true);
+                $modelAccuracy = $accuracyData['accuracy'] ?? null;
+            }
         }
 
-        // Statistik prediksi
         $totalPrediksi = Prediksi::count();
 
-        // Data untuk chart
         $chartData = Prediksi::selectRaw('prediksi, COUNT(*) as total')
             ->groupBy('prediksi')
             ->get()
@@ -33,8 +35,7 @@ class DashboardController extends Controller
                 'y' => (int) $row->total
             ]);
 
-        // Data prediksi terbaru
-        $latestPredictions = Prediksi::latest()->take(5)->get();
+        $latestPredictions = Prediksi::with('karyawan')->latest()->take(5)->get();
 
         return view('pages.dashboards.index', compact(
             'totalKaryawan',
@@ -42,7 +43,8 @@ class DashboardController extends Controller
             'lastTrainingDate',
             'totalPrediksi',
             'chartData',
-            'latestPredictions'
+            'latestPredictions',
+            'modelAccuracy'
         ));
     }
 }

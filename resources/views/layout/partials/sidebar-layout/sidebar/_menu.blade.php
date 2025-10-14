@@ -53,9 +53,9 @@
 
 			<!--begin: Prediksi Kinerja-->
 			<div class="menu-item">
-				<a class="menu-link {{ request()->routeIs('training.predict.form') ? 'active' : '' }}" href="{{ route('training.predict.form') }}">
+				<a class="menu-link {{ request()->routeIs('prediksi.*') ? 'active' : '' }}" href="{{ route('prediksi.index') }}">
 					<span class="menu-icon">{!! getIcon('graph-up', 'fs-2') !!}</span>
-					<span class="menu-title">Prediksi Kinerja</span>
+					<span class="menu-title">Prediksi Kinerja Karyawan</span>
 				</a>
 			</div>
 			<!--end: Prediksi Kinerja-->

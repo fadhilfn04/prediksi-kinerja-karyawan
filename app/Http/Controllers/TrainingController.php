@@ -20,6 +20,7 @@ class TrainingController extends Controller
     {
         try {
             $data = Karyawan::select(
+                'id',
                 'nik',
                 'nama',
                 'jenis_kelamin',
@@ -91,8 +92,15 @@ class TrainingController extends Controller
             $data = json_decode($json, true);
 
             foreach ($data as &$row) {
-                $row['label_kinerja'] = $row['hasil_penilaian_kinerja_sebelumnya'] >= 80 ? 'Baik' : 'Kurang';
+                if ($row['hasil_penilaian_kinerja_sebelumnya'] >= 80) {
+                    $row['label_kinerja'] = 'Baik';
+                } elseif ($row['hasil_penilaian_kinerja_sebelumnya'] >= 60) {
+                    $row['label_kinerja'] = 'Cukup';
+                } else {
+                    $row['label_kinerja'] = 'Kurang';
+                }
             }
+
 
             $attributes = [
                 'jenis_kelamin',
@@ -102,11 +110,9 @@ class TrainingController extends Controller
                 'jabatan'
             ];
 
-            // === Training dengan ID3 ===
             $tree = (new ID3($data, 'label_kinerja'))->train($attributes);
             Storage::disk('local')->put('training/model.json', json_encode($tree, JSON_PRETTY_PRINT));
 
-            // === Hitung akurasi ===
             $predictor = new Predictor($tree);
             $total = count($data);
             $benar = 0;
@@ -124,11 +130,21 @@ class TrainingController extends Controller
                 if ($prediksi === $item['label_kinerja']) {
                     $benar++;
                 }
+
+                Prediksi::updateOrCreate(['karyawan_id' => $item['id']],
+                    [
+                        'jenis_kelamin' => $item['jenis_kelamin'],
+                        'pendidikan_terakhir' => $item['pendidikan_terakhir'],
+                        'lama_bekerja' => $item['lama_bekerja'],
+                        'jumlah_kehadiran' => $item['jumlah_kehadiran'],
+                        'jabatan' => $item['jabatan'],
+                        'prediksi' => $prediksi,
+                    ]
+                );
             }
 
             $akurasi = $total > 0 ? round(($benar / $total) * 100, 2) : 0;
 
-            // Simpan akurasi ke file
             $accuracyData = [
                 'accuracy' => $akurasi,
                 'total_data' => $total,
@@ -139,7 +155,7 @@ class TrainingController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Proses training dengan ID3 berhasil!',
+                'message' => 'Proses training dengan algoritma Decision Tree berhasil!',
                 'tree' => $tree,
                 'accuracy' => $accuracyData
             ]);
@@ -150,49 +166,6 @@ class TrainingController extends Controller
                 'message' => 'Terjadi kesalahan saat proses training: ' . $e->getMessage()
             ]);
         }
-    }
-
-    public function predict(Request $request)
-    {
-        $validated = $request->validate([
-            'jenis_kelamin' => 'required|string',
-            'pendidikan_terakhir' => 'required|string',
-            'lama_bekerja' => 'required|string',
-            'jumlah_kehadiran' => 'required|string',
-            'jabatan' => 'required|string',
-        ]);
-
-        // Pastikan model sudah tersedia
-        if (!Storage::disk('local')->exists('training/model.json')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Model belum tersedia. Silakan lakukan training terlebih dahulu.'
-            ], 400);
-        }
-
-        // Load model decision tree
-        $modelJson = Storage::disk('local')->get('training/model.json');
-        $tree = json_decode($modelJson, true);
-
-        // Lakukan prediksi
-        $predictor = new Predictor($tree);
-        $result = $predictor->predict($validated);
-
-        // Simpan hasil prediksi ke database (tanpa nama)
-        Prediksi::create([
-            'jenis_kelamin' => $validated['jenis_kelamin'],
-            'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
-            'lama_bekerja' => $validated['lama_bekerja'],
-            'jumlah_kehadiran' => $validated['jumlah_kehadiran'],
-            'jabatan' => $validated['jabatan'],
-            'prediksi' => $result,
-        ]);
-
-        // Return response ke frontend
-        return response()->json([
-            'success' => true,
-            'prediction' => $result
-        ]);
     }
 
     public function simpan()

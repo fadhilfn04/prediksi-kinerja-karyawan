@@ -21,4 +21,9 @@ class Karyawan extends Model
         'hasil_penilaian_kinerja_sebelumnya',
         'jabatan',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
