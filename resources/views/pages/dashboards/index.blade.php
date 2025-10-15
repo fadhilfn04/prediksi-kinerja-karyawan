@@ -90,7 +90,7 @@
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title fw-bold">Prediksi Terbaru</h3>
-                    <a href="{{ route('prediksi.index') }}" class="btn btn-sm btn-light-primary">
+                    <a href="{{ route('karyawan.index') }}" class="btn btn-sm btn-light-primary">
                         Lihat Semua
                     </a>
                 </div>
@@ -112,7 +112,7 @@
                                 @foreach($latestPredictions as $index => $p)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td>{{ $p->karyawan->nama ?? '-' }}</td>
+                                        <td>{{ $p->nama ?? '-' }}</td>
                                         <td>
                                             @if($p->jenis_kelamin == 'L') Laki-laki
                                             @elseif($p->jenis_kelamin == 'P') Perempuan

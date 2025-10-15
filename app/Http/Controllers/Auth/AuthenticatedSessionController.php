@@ -47,7 +47,7 @@ class AuthenticatedSessionController extends Controller
 
         $nik = $request->input('login');
         $karyawan = Karyawan::where('nik', $nik)->first();
-        $prediksi = Prediksi::where('karyawan_id', $karyawan->id)->latest('created_at')->first();
+        $prediksi = Karyawan::where('id', $karyawan->id)->latest('created_at')->first();
 
         return response()->json([
             'success' => true,

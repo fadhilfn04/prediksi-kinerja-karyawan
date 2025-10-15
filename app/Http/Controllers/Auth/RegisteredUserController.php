@@ -39,13 +39,13 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'nik' => ['required', 'string', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => $request->nik,
             'email_verified_at' => Carbon::now(),
             'password' => Hash::make($request->password),
             'last_login_at' => \Illuminate\Support\Carbon::now()->toDateTimeString(),

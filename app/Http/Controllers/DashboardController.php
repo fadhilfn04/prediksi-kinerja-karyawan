@@ -25,9 +25,9 @@ class DashboardController extends Controller
             }
         }
 
-        $totalPrediksi = Prediksi::count();
+        $totalPrediksi = Karyawan::count();
 
-        $chartData = Prediksi::selectRaw('prediksi, COUNT(*) as total')
+        $chartData = Karyawan::selectRaw('prediksi, COUNT(*) as total')
             ->groupBy('prediksi')
             ->get()
             ->map(fn ($row) => [
@@ -35,7 +35,9 @@ class DashboardController extends Controller
                 'y' => (int) $row->total
             ]);
 
-        $latestPredictions = Prediksi::with('karyawan')->latest()->take(5)->get();
+        $latestPredictions = Karyawan::latest()->take(5)
+        ->where('prediksi', '<>', NULL)
+        ->get();
 
         return view('pages.dashboards.index', compact(
             'totalKaryawan',

@@ -22,6 +22,12 @@
                             <input type="text" name="nama" id="create_nama" class="form-control form-control-solid" required />
                         </div>
 
+                        <!-- Umur -->
+                        <div class="col-md-6 fv-row">
+                            <label for="create_umur" class="form-label fw-semibold required">Umur</label>
+                            <input type="number" name="umur" id="create_umur" class="form-control form-control-solid" required />
+                        </div>
+
                         <!-- Jenis Kelamin -->
                         <div class="col-md-6 fv-row">
                             <label for="create_jenis_kelamin" class="form-label fw-semibold required">Jenis Kelamin</label>
@@ -54,6 +60,12 @@
                         <div class="col-md-6 fv-row">
                             <label for="create_jumlah_kehadiran" class="form-label fw-semibold required">Jumlah Kehadiran</label>
                             <input type="number" name="jumlah_kehadiran" id="create_jumlah_kehadiran" class="form-control form-control-solid" required />
+                        </div>
+
+                        <!-- Nilai Produktivitas -->
+                        <div class="col-md-6 fv-row">
+                            <label for="create_nilai_produktivitas" class="form-label fw-semibold required">Nilai Produktivitas</label>
+                            <input type="number" step="0.01" name="nilai_produktivitas" id="create_nilai_produktivitas" class="form-control form-control-solid" required />
                         </div>
 
                         <!-- Penilaian -->

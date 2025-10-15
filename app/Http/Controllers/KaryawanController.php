@@ -25,12 +25,14 @@ class KaryawanController extends Controller
         $validated = $request->validate([
             'nik' => 'required|unique:karyawan,nik',
             'nama' => 'required|string|max:255',
+            'umur' => 'required|integer|min:0',
             'jenis_kelamin' => 'required|in:L,P',
             'pendidikan_terakhir' => 'required|string|max:50',
+            'jabatan' => 'required|string|max:255',
             'lama_bekerja' => 'required|integer|min:0',
             'jumlah_kehadiran' => 'required|integer|min:0|max:260',
+            'nilai_produktivitas' => 'required|numeric|min:0|max:100',
             'hasil_penilaian_kinerja_sebelumnya' => 'required|numeric|min:0|max:100',
-            'jabatan' => 'required|string|max:255',
         ]);
 
         Karyawan::create($validated);
@@ -48,12 +50,14 @@ class KaryawanController extends Controller
         $validated = $request->validate([
             'nik' => 'required|unique:karyawan,nik,' . $karyawan->id,
             'nama' => 'required|string|max:255',
+            'umur' => 'required|integer|min:0',
             'jenis_kelamin' => 'required|in:L,P',
             'pendidikan_terakhir' => 'required|string|max:50',
+            'jabatan' => 'required|string|max:255',
             'lama_bekerja' => 'required|integer|min:0',
             'jumlah_kehadiran' => 'required|integer|min:0|max:260',
+            'nilai_produktivitas' => 'required|numeric|min:0|max:100',
             'hasil_penilaian_kinerja_sebelumnya' => 'required|numeric|min:0|max:100',
-            'jabatan' => 'required|string|max:255',
         ]);
 
         $karyawan->update($validated);

@@ -29,7 +29,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('karyawan', KaryawanController::class);
     Route::post('/karyawan/import', [KaryawanController::class, 'import'])->name('karyawan.import');
-    Route::resource('prediksi', PrediksiController::class);
 
     Route::prefix('training')->group(function () {
         Route::get('/', [TrainingController::class, 'index'])->name('training.index');

@@ -57,11 +57,11 @@ class LoginRequest extends FormRequest
         $login = $this->input('login');
         $password = $this->input('password');
 
-        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+        if ($login && $password) {
             $credentials = ['email' => $login, 'password' => $password];
             if (!Auth::attempt($credentials)) {
                 throw ValidationException::withMessages([
-                    'login' => __('Email atau password salah')
+                    'login' => __('NIK atau PIN salah')
                 ]);
             }
             return Auth::user();

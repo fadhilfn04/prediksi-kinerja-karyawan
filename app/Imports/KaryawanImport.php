@@ -23,12 +23,14 @@ class KaryawanImport implements ToModel, WithHeadingRow
         return new Karyawan([
             'nik' => $row['nik'],
             'nama' => $row['nama'],
+            'umur' => $row['umur'],
             'jenis_kelamin' => $row['jenis_kelamin'],
             'pendidikan_terakhir' => $row['pendidikan_terakhir'],
+            'jabatan' => $row['jabatan'],
             'lama_bekerja' => $row['lama_bekerja'],
             'jumlah_kehadiran' => $row['jumlah_kehadiran'],
+            'nilai_produktivitas' => $row['nilai_produktivitas'],
             'hasil_penilaian_kinerja_sebelumnya' => $row['hasil_penilaian_kinerja_sebelumnya'],
-            'jabatan' => $row['jabatan'],
         ]);
     }
 }

@@ -22,7 +22,7 @@
 			<!--begin:Master Data section-->
 			<div class="menu-item pt-5">
 				<div class="menu-content">
-					<span class="menu-heading fw-bold text-uppercase fs-7">Master Data</span>
+					<span class="menu-heading fw-bold text-uppercase fs-7">Master Data & Model</span>
 				</div>
 			</div>
 
@@ -35,13 +35,6 @@
 			</div>
 			<!--end:Karyawan-->
 
-			<!--begin:Training section-->
-			<div class="menu-item pt-5">
-				<div class="menu-content">
-					<span class="menu-heading fw-bold text-uppercase fs-7">Model & Prediksi</span>
-				</div>
-			</div>
-
 			<!--begin: Training Model-->
 			<div class="menu-item">
 				<a class="menu-link {{ request()->routeIs('training.*') ? 'active' : '' }}" href="{{ route('training.index') }}">
@@ -50,16 +43,6 @@
 				</a>
 			</div>
 			<!--end: Training Model-->
-
-			<!--begin: Prediksi Kinerja-->
-			<div class="menu-item">
-				<a class="menu-link {{ request()->routeIs('prediksi.*') ? 'active' : '' }}" href="{{ route('prediksi.index') }}">
-					<span class="menu-icon">{!! getIcon('graph-up', 'fs-2') !!}</span>
-					<span class="menu-title">Prediksi Kinerja Karyawan</span>
-				</a>
-			</div>
-			<!--end: Prediksi Kinerja-->
-
 		</div>
 		<!--end::Menu-->
 	</div>

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Karyawan;
 use App\Models\Prediksi;
+use App\Services\DecisionTree\C45;
 use Illuminate\Http\Request;
 use App\Services\DecisionTree\ID3;
 use App\Services\DecisionTree\Predictor;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class TrainingController extends Controller
@@ -23,12 +25,14 @@ class TrainingController extends Controller
                 'id',
                 'nik',
                 'nama',
+                'umur',
                 'jenis_kelamin',
                 'pendidikan_terakhir',
+                'jabatan',
                 'lama_bekerja',
                 'jumlah_kehadiran',
+                'nilai_produktivitas',
                 'hasil_penilaian_kinerja_sebelumnya',
-                'jabatan'
             )->get();
 
             if ($data->isEmpty()) {
@@ -103,14 +107,15 @@ class TrainingController extends Controller
 
 
             $attributes = [
-                'jenis_kelamin',
+                'jabatan',
+                'umur',
                 'pendidikan_terakhir',
                 'lama_bekerja',
                 'jumlah_kehadiran',
-                'jabatan'
+                'nilai_produktivitas',
             ];
 
-            $tree = (new ID3($data, 'label_kinerja'))->train($attributes);
+            $tree = (new C45($data, 'label_kinerja'))->train($attributes);
             Storage::disk('local')->put('training/model.json', json_encode($tree, JSON_PRETTY_PRINT));
 
             $predictor = new Predictor($tree);
@@ -119,11 +124,12 @@ class TrainingController extends Controller
 
             foreach ($data as $item) {
                 $input = [
-                    'jenis_kelamin' => $item['jenis_kelamin'],
+                    'jabatan' => $item['jabatan'],
+                    'umur' => $item['umur'],
                     'pendidikan_terakhir' => $item['pendidikan_terakhir'],
                     'lama_bekerja' => $item['lama_bekerja'],
                     'jumlah_kehadiran' => $item['jumlah_kehadiran'],
-                    'jabatan' => $item['jabatan'],
+                    'nilai_produktivitas' => $item['nilai_produktivitas'],
                 ];
 
                 $prediksi = $predictor->predict($input);
@@ -131,16 +137,12 @@ class TrainingController extends Controller
                     $benar++;
                 }
 
-                Prediksi::updateOrCreate(['karyawan_id' => $item['id']],
-                    [
-                        'jenis_kelamin' => $item['jenis_kelamin'],
-                        'pendidikan_terakhir' => $item['pendidikan_terakhir'],
-                        'lama_bekerja' => $item['lama_bekerja'],
-                        'jumlah_kehadiran' => $item['jumlah_kehadiran'],
-                        'jabatan' => $item['jabatan'],
-                        'prediksi' => $prediksi,
-                    ]
-                );
+                $karyawan = Karyawan::find($item['id']);
+                if ($karyawan) {
+                    $karyawan->prediksi = $prediksi;
+                    $karyawan->tanggal_prediksi = Carbon::now();
+                    $karyawan->save();
+                }
             }
 
             $akurasi = $total > 0 ? round(($benar / $total) * 100, 2) : 0;

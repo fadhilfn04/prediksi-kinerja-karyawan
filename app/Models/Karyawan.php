@@ -15,11 +15,13 @@ class Karyawan extends Model
         'nik',
         'nama',
         'jenis_kelamin',
+        'jabatan',
+        'umur',
         'pendidikan_terakhir',
         'lama_bekerja',
         'jumlah_kehadiran',
+        'nilai_produktivitas',
         'hasil_penilaian_kinerja_sebelumnya',
-        'jabatan',
     ];
 
     public function user()

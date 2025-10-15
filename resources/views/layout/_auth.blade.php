@@ -33,7 +33,7 @@
                     <!--end::Logo-->
 
                     <!--begin::Image-->
-                    {{-- <img class="d-none d-lg-block mx-auto w-275px w-md-50 w-xl-500px mb-10 mb-lg-20" src="{{ image('misc/auth-screens.png') }}" alt=""/> --}}
+                    <img class="d-none d-lg-block mx-auto w-275px w-md-50 w-xl-500px mb-10 mb-lg-20" src="{{ image('illustrations/dozzy-1/6.png') }}" alt=""/>
                     <!--end::Image-->
 
                     <!--begin::Title-->

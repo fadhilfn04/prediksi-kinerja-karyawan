@@ -45,14 +45,6 @@ var KTSignupGeneral = function () {
                             notEmpty: {
                                 message: 'The password is required'
                             },
-                            callback: {
-                                message: 'Please enter valid password',
-                                callback: function (input) {
-                                    if (input.value.length > 0) {
-                                        return validatePassword();
-                                    }
-                                }
-                            }
                         }
                     },
                     'confirm-password': {
@@ -190,14 +182,6 @@ var KTSignupGeneral = function () {
                             notEmpty: {
                                 message: 'The password is required'
                             },
-                            callback: {
-                                message: 'Please enter valid password',
-                                callback: function (input) {
-                                    if (input.value.length > 0) {
-                                        return validatePassword();
-                                    }
-                                }
-                            }
                         }
                     },
                     'password_confirmation': {

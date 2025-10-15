@@ -17,7 +17,7 @@
     <form class="form w-100 login-form" id="formAdmin" method="POST" action="{{ route('login') }}">
         @csrf
         <div class="fv-row mb-8">
-            <input type="email" placeholder="Email" name="login" autocomplete="off"
+            <input type="text" placeholder="NIK" name="login" autocomplete="off"
                 class="form-control bg-transparent @error('login') is-invalid @enderror"/>
             @error('login')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
@@ -54,15 +54,21 @@
                 <p><strong>Jabatan:</strong> <span id="prediksiJabatan"></span></p>
                 <p><strong>Pendidikan:</strong> <span id="prediksiPendidikan"></span></p>
                 <p><strong>Prediksi Kinerja:</strong> <span id="prediksiStatus" class="badge"></span></p>
+
+                <div id="pretestLinkWrapper" class="mt-4" style="display:none;">
+                    <a href="#" class="btn btn-sm btn-light-danger w-100">
+                        Ikuti Pretest Sekarang
+                    </a>
+                </div>
             </div>
         </div>
     </form>
     <!--end::Form Karyawan-->
 
     <!--begin::Sign up-->
-    {{-- <div class="text-gray-500 text-center fw-semibold fs-6 mt-4">
+    <div class="text-gray-500 text-center fw-semibold fs-6 mt-4">
         Belum punya akun? <a href="{{ route('register') }}" class="link-primary">Daftar Sekarang</a>
-    </div> --}}
+    </div>
     <!--end::Sign up-->
 
     @push('scripts')
@@ -108,6 +114,13 @@
                     badge.innerText = data.prediksi.prediksi;
                     badge.className = 'badge ' + (data.prediksi.prediksi == 'Baik' ? 'bg-success' :
                         data.prediksi.prediksi == 'Cukup' ? 'bg-warning' : 'bg-danger');
+
+                    const pretestLinkWrapper = document.getElementById('pretestLinkWrapper');
+                    if (data.prediksi.prediksi === 'Kurang') {
+                        pretestLinkWrapper.style.display = 'block';
+                    } else {
+                        pretestLinkWrapper.style.display = 'none';
+                    }
                 } else {
                     Swal.fire({
                         icon: 'error',
