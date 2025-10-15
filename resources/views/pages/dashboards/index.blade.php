@@ -80,7 +80,7 @@
                     <h3 class="card-title fw-bold">Ringkasan Hasil Prediksi</h3>
                 </div>
                 <div class="card-body">
-                    <div id="predictionChart" style="height: 300px;"></div>
+                    <div id="predictionChart"></div>
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@
                                 </tr>
                             </thead>
                             <tbody class="fw-semibold text-gray-600">
-                                @forelse($latestPredictions as $index => $p)
+                                @foreach($latestPredictions as $index => $p)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $p->karyawan->nama ?? '-' }}</td>
@@ -131,11 +131,7 @@
                                         </td>
                                         <td>{{ $p->created_at->format('d M Y') }}</td>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center text-muted py-4">Belum ada data prediksi</td>
-                                    </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -153,7 +149,7 @@
 
                 const options = {
                     series: series,
-                    chart: { type: 'pie', height: 300 },
+                    chart: { type: 'pie', height: 500 },
                     labels: labels,
                     legend: { position: 'bottom' },
                     responsive: [{

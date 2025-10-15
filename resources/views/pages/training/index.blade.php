@@ -13,16 +13,30 @@
 
             <div class="card-toolbar">
                 <button id="btnAmbil" class="btn btn-light-primary me-2">
-                    Ambil Data
+                    <i class="ki-duotone ki-some-files">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    </i> Ambil Data
                 </button>
                 <button id="btnReturn" class="btn btn-light-info me-2">
-                    Return Data
+                    <i class="ki-duotone ki-eye">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i> Return Data
                 </button>
                 <button id="btnProses" class="btn btn-light-warning me-2">
-                    Proses Decision Tree
+                    <i class="ki-duotone ki-tree">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i> Proses Decision Tree
                 </button>
                 <button id="btnSimpan" class="btn btn-light-success">
-                    Simpan Model
+                    <i class="ki-duotone ki-file-added">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i> Simpan Model
                 </button>
             </div>
         </div>

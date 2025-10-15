@@ -12,6 +12,13 @@
             </div>
 
             <div class="card-toolbar">
+                <button type="button" class="btn btn-light-warning me-2" data-bs-toggle="modal" data-bs-target="#modalImportKaryawan">
+                    <i class="ki-duotone ki-file-up">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i> Import Excel
+                </button>
+
                 <button type="button" class="btn btn-light-primary" data-bs-toggle="modal" data-bs-target="#modalTambahKaryawan">
                     <i class="ki-duotone ki-plus fs-2"></i> Tambah Karyawan
                 </button>
@@ -100,17 +107,85 @@
     @include('pages.karyawan._modal-create')
     
     <!-- Modal Edit Karyawan -->
-    @include('pages.karyawan._modal-edit')    
+    @include('pages.karyawan._modal-edit')
+
+    <!-- Modal Import Karyawan -->
+    <div class="modal fade" id="modalImportKaryawan" tabindex="-1" aria-labelledby="modalImportKaryawanLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalImportKaryawanLabel">Import Data Karyawan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="text-muted fs-7">
+                            <i class="ki-duotone ki-information">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i> Unduh template untuk memastikan format sesuai.
+                        </div>
+                        <a href="{{ asset('template_karyawan.xlsx') }}" class="btn btn-sm btn-light-primary" download>
+                            Download Template
+                        </a>
+                    </div>
+
+                    <form action="{{ route('karyawan.import') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="file_import" class="form-label fw-semibold">Pilih File Excel (.xls / .xlsx)</label>
+                            <input type="file" name="file" id="file_import" class="form-control" accept=".xls,.xlsx" required>
+                        </div>
+                        <div class="text-muted fs-7">
+                            <i class="ki-duotone ki-alert fs-3"></i> Pastikan semua kolom terisi dengan benar sebelum diimport.
+                        </div>
+
+                        <div class="modal-footer px-0 mt-4">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ki-duotone ki-file-up">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i> Import
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @push('scripts')
         <script>
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                })
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: '{{ session('error') }}',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Coba Lagi'
+                })
+            @endif
+
             $(document).ready(function () {
                 var table = $('#karyawan_table').DataTable();
                 $('#global_search').on('keyup', function () {
                     table.search(this.value).draw();
                 });
 
-                $('.btn-edit-karyawan').on('click', function () {
+                $(document).on('click', '.btn-edit-karyawan', function () {
                     const id = $(this).data('id');
                     $('#edit_nik').val($(this).data('nik'));
                     $('#edit_nama').val($(this).data('nama'));
@@ -124,7 +199,7 @@
                     $('#formEditKaryawan').attr('action', `/karyawan/${id}`);
                 });
 
-                $('.btn-hapus-karyawan').on('click', function(e){
+                $(document).on('click', '.btn-hapus-karyawan', function(e){
                     e.preventDefault();
                     const form = $(this).closest('form');
 

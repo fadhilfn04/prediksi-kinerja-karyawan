@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\KaryawanImport;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KaryawanController extends Controller
 {
@@ -63,5 +65,20 @@ class KaryawanController extends Controller
     {
         $karyawan->delete();
         return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil dihapus.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ]);
+
+        try {
+            Excel::import(new KaryawanImport, $request->file('file'));
+
+            return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil diimport!');
+        } catch (\Exception $e) {
+            return redirect()->route('karyawan.index')->with('error', 'Terjadi kesalahan saat mengimport: ' . $e->getMessage());
+        }
     }
 }
