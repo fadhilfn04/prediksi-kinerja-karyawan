@@ -7,7 +7,12 @@
 
     <div class="card mb-5">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title fw-bold">Data Karyawan</h3>
+            <!--begin::Search-->
+                <div class="d-flex align-items-center position-relative my-1">
+                    {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
+                    <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Cari data..." id="global_search"/>
+                </div>
+                <!--end::Search-->
 
             <div class="card-toolbar">
                 <button type="button" class="btn btn-light-warning me-2" data-bs-toggle="modal" data-bs-target="#modalImportKaryawan">
@@ -24,10 +29,6 @@
         </div>
 
         <div class="card-body">
-            <div class="d-flex justify-content-end mb-3">
-                <input type="text" id="global_search" class="form-control form-control-sm w-25" placeholder="Cari data...">
-            </div>
-
             <div class="table-responsive">
                 <table class="table align-middle table-row-dashed fs-6 gy-5" id="karyawan_table">
                     <thead>

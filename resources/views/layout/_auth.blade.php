@@ -38,14 +38,14 @@
 
                     <!--begin::Title-->
                     <h1 class="d-none d-lg-block text-white fs-2qx fw-bolder text-center mb-7">
-                        Aplikasi Prediksi Kinerja Karyawan Alfamart Zona 3 Bandung Barat Menggunakan Algoritma Decision Tree
+                        Aplikasi Prediksi Kinerja <br>Karyawan Alfamart Zona 3 Bandung Barat Menggunakan Algoritma Decision Tree
                     </h1>
                     <!--end::Title-->
 
                     <!--begin::Text-->
                     <div class="d-none d-lg-block text-white fs-base text-center">
                         Aplikasi ini digunakan untuk memprediksi kinerja karyawan berdasarkan data historis, 
-                        termasuk pendidikan, lama bekerja, kehadiran, dan jabatan, sehingga manajemen dapat 
+                        termasuk lama bekerja, kehadiran, dan jabatan, sehingga manajemen dapat 
                         mengambil keputusan berbasis data dengan lebih efektif.
                     </div>
                     <!--end::Text-->

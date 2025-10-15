@@ -105,7 +105,6 @@
                                     <th>Pendidikan</th>
                                     <th>Jabatan</th>
                                     <th>Prediksi</th>
-                                    <th>Tanggal</th>
                                 </tr>
                             </thead>
                             <tbody class="fw-semibold text-gray-600">
@@ -129,7 +128,6 @@
                                                 {{ $p->prediksi }}
                                             </span>
                                         </td>
-                                        <td>{{ $p->created_at->format('d M Y') }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -170,10 +168,9 @@
                 }
 
                 $('#prediksi_table').DataTable({
-                    paging: false,
-                    searching: false,
-                    info: false,
-                    order: [[0, 'asc']]
+                    columnDefs: [
+                        { className: 'text-center', targets: '_all' },
+                    ],
                 });
             });
         </script>

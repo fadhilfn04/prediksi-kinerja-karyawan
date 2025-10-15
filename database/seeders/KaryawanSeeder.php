@@ -15,9 +15,9 @@ class KaryawanSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             Karyawan::create([
-                'nik' => $faker->unique()->numerify('NIK#####'),
+                'nik' => $faker->unique()->numerify('##########'),
                 'nama' => $faker->name(),
                 'umur' => $faker->numberBetween(20, 60),
                 'jenis_kelamin' => $faker->randomElement(['L', 'P']),

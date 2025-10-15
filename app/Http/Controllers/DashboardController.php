@@ -25,7 +25,7 @@ class DashboardController extends Controller
             }
         }
 
-        $totalPrediksi = Karyawan::count();
+        $totalPrediksi = Karyawan::where('prediksi', '<>', NULL)->count();
 
         $chartData = Karyawan::selectRaw('prediksi, COUNT(*) as total')
             ->groupBy('prediksi')
