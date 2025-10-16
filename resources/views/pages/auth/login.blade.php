@@ -56,7 +56,7 @@
                 <p><strong>Prediksi Kinerja:</strong> <span id="prediksiStatus" class="badge"></span></p>
 
                 <div id="pretestLinkWrapper" class="mt-4" style="display:none;">
-                    <a href="#" class="btn btn-sm btn-light-danger w-100">
+                    <a href="https://linktr.ee/AlfamartBandung1" class="btn btn-sm btn-light-danger w-100">
                         Ikuti Pretest Sekarang
                     </a>
                 </div>
