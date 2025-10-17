@@ -16,11 +16,11 @@ class Karyawan extends Model
         'nama',
         'jenis_kelamin',
         'jabatan',
-        'umur',
+        'usia',
         'pendidikan_terakhir',
         'lama_bekerja',
-        'jumlah_kehadiran',
-        'nilai_produktivitas',
+        'kehadiran',
+        'produktivitas_kerja',
         'hasil_penilaian_kinerja_sebelumnya',
     ];
 

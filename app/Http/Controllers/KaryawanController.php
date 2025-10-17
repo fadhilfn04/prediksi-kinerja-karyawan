@@ -25,17 +25,31 @@ class KaryawanController extends Controller
         $validated = $request->validate([
             'nik' => 'required|unique:karyawan,nik',
             'nama' => 'required|string|max:255',
-            'umur' => 'required|integer|min:0',
             'jenis_kelamin' => 'required|in:L,P',
+            'usia' => 'required|integer|min:0',
             'pendidikan_terakhir' => 'required|string|max:50',
-            'jabatan' => 'required|string|max:255',
-            'lama_bekerja' => 'required|integer|min:0',
-            'jumlah_kehadiran' => 'required|integer|min:0|max:260',
-            'nilai_produktivitas' => 'required|numeric|min:0|max:100',
+            'lama_bekerja_satuan' => 'required|in:TAHUN,BULAN',
+            'lama_bekerja_angka' => 'required|integer|min:0',
+            'kehadiran' => 'required|integer|min:0|max:260',
             'hasil_penilaian_kinerja_sebelumnya' => 'required|numeric|min:0|max:100',
+            'jabatan' => 'required|string|max:255',
+            'produktivitas_kerja' => 'required|in:Tercapai,Tidak Tercapai',
         ]);
 
-        Karyawan::create($validated);
+        $lamaBekerja = $validated['lama_bekerja_angka'] . ' ' . $validated['lama_bekerja_satuan'];
+
+        Karyawan::create([
+            'nik' => $validated['nik'],
+            'nama' => $validated['nama'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'usia' => $validated['usia'],
+            'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
+            'lama_bekerja' => $lamaBekerja,
+            'kehadiran' => $validated['kehadiran'],
+            'hasil_penilaian_kinerja_sebelumnya' => $validated['hasil_penilaian_kinerja_sebelumnya'],
+            'jabatan' => $validated['jabatan'],
+            'produktivitas_kerja' => $validated['produktivitas_kerja'],
+        ]);
 
         return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil ditambahkan.');
     }
@@ -50,17 +64,31 @@ class KaryawanController extends Controller
         $validated = $request->validate([
             'nik' => 'required|unique:karyawan,nik,' . $karyawan->id,
             'nama' => 'required|string|max:255',
-            'umur' => 'required|integer|min:0',
             'jenis_kelamin' => 'required|in:L,P',
+            'usia' => 'required|integer|min:0',
             'pendidikan_terakhir' => 'required|string|max:50',
-            'jabatan' => 'required|string|max:255',
-            'lama_bekerja' => 'required|integer|min:0',
-            'jumlah_kehadiran' => 'required|integer|min:0|max:260',
-            'nilai_produktivitas' => 'required|numeric|min:0|max:100',
+            'lama_bekerja_satuan' => 'required|in:TAHUN,BULAN',
+            'lama_bekerja_angka' => 'required|integer|min:0',
+            'kehadiran' => 'required|integer|min:0|max:260',
             'hasil_penilaian_kinerja_sebelumnya' => 'required|numeric|min:0|max:100',
+            'jabatan' => 'required|string|max:255',
+            'produktivitas_kerja' => 'required|in:Tercapai,Tidak Tercapai',
         ]);
 
-        $karyawan->update($validated);
+        $lamaBekerja = $validated['lama_bekerja_angka'] . ' ' . $validated['lama_bekerja_satuan'];
+
+        $karyawan->update([
+            'nik' => $validated['nik'],
+            'nama' => $validated['nama'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'usia' => $validated['usia'],
+            'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
+            'lama_bekerja' => $lamaBekerja,
+            'kehadiran' => $validated['kehadiran'],
+            'hasil_penilaian_kinerja_sebelumnya' => $validated['hasil_penilaian_kinerja_sebelumnya'],
+            'jabatan' => $validated['jabatan'],
+            'produktivitas_kerja' => $validated['produktivitas_kerja'],
+        ]);
 
         return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil diperbarui.');
     }

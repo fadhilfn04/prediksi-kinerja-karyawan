@@ -19,14 +19,14 @@ class KaryawanSeeder extends Seeder
             Karyawan::create([
                 'nik' => $faker->unique()->numerify('##########'),
                 'nama' => $faker->name(),
-                'umur' => $faker->numberBetween(20, 60),
                 'jenis_kelamin' => $faker->randomElement(['L', 'P']),
                 'pendidikan_terakhir' => $faker->randomElement(['SMA', 'D3', 'D4', 'S1']),
                 'jabatan' => $faker->randomElement(['COS', 'ACOS', 'CREW']),
-                'lama_bekerja' => $faker->numberBetween(1, 20),
-                'jumlah_kehadiran' => $faker->numberBetween(200, 260),
-                'nilai_produktivitas' => $faker->randomFloat(2, 50, 100),
+                'lama_bekerja' => $faker->randomElement(['10 TAHUN', '5 TAHUN', '3 TAHUN', '1 TAHUN', '6 BULAN', '3 BULAN']),
+                'kehadiran' => $faker->numberBetween(20, 100),
+                'produktivitas_kerja' => $faker->randomElement(['Tidak Tercapai', 'Tercapai']),
                 'hasil_penilaian_kinerja_sebelumnya' => $faker->randomFloat(2, 50, 100),
+                'usia' => $faker->numberBetween(20, 60),
             ]);
         }
     }

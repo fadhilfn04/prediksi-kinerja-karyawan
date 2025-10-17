@@ -36,14 +36,14 @@
                             <th class="min-w-100px">No</th>
                             <th class="min-w-100px">NIK</th>
                             <th class="min-w-150px">Nama</th>
-                            <th class="min-w-150px">Umur</th>
+                            <th class="min-w-150px">Usia</th>
                             <th class="min-w-150px">Jenis Kelamin</th>
                             <th class="min-w-150px">Pendidikan Terakhir</th>
-                            <th class="min-w-150px">Jabatan</th>
-                            <th class="min-w-150px">Lama Bekerja (tahun)</th>
+                            <th class="min-w-150px">Lama Bekerja</th>
                             <th class="min-w-150px">Jumlah Kehadiran</th>
-                            <th class="min-w-150px">Nilai Produktivitas</th>
-                            <th class="min-w-150px">Hasil Penilaian Kinerja Sebelumnya (%)</th>
+                            <th class="min-w-150px">Hasil Penilaian Kinerja Sebelumnya</th>
+                            <th class="min-w-150px">Produktivitas Kerja</th>
+                            <th class="min-w-150px">Jabatan</th>
                             <th class="min-w-150px">Prediksi</th>
                             <th class="min-w-150px">Tanggal Prediksi</th>
                             <th class="text-end min-w-100px">Aksi</th>
@@ -55,14 +55,14 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $k->nik }}</td>
                             <td>{{ $k->nama }}</td>
-                            <td>{{ $k->umur }}</td>
+                            <td>{{ $k->usia }}</td>
                             <td>{{ $k->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
                             <td>{{ $k->pendidikan_terakhir }}</td>
-                            <td>{{ $k->jabatan }}</td>
                             <td>{{ $k->lama_bekerja }}</td>
-                            <td>{{ $k->jumlah_kehadiran }}</td>
-                            <td>{{ $k->nilai_produktivitas }}</td>
+                            <td>{{ $k->kehadiran }}</td>
                             <td>{{ $k->hasil_penilaian_kinerja_sebelumnya }}</td>
+                            <td>{{ $k->produktivitas_kerja }}</td>
+                            <td>{{ $k->jabatan }}</td>
                             <td>
                                 @if(isset($k->prediksi))
                                     <span class="badge 
@@ -92,14 +92,14 @@
                                         data-id="{{ $k->id }}"
                                         data-nik="{{ $k->nik }}"
                                         data-nama="{{ $k->nama }}"
-                                        data-umur="{{ $k->umur }}"
+                                        data-usia="{{ $k->usia }}"
                                         data-jenis_kelamin="{{ $k->jenis_kelamin }}"
                                         data-pendidikan="{{ $k->pendidikan_terakhir }}"
-                                        data-jabatan="{{ $k->jabatan }}"
                                         data-lama_bekerja="{{ $k->lama_bekerja }}"
-                                        data-jumlah_kehadiran="{{ $k->jumlah_kehadiran }}"
-                                        data-nilai_produktivitas="{{ $k->nilai_produktivitas }}"
-                                        data-penilaian="{{ $k->hasil_penilaian_kinerja_sebelumnya }}">
+                                        data-kehadiran="{{ $k->kehadiran }}"
+                                        data-penilaian="{{ $k->hasil_penilaian_kinerja_sebelumnya }}"
+                                        data-jabatan="{{ $k->jabatan }}"
+                                        data-produktivitas_kerja="{{ $k->produktivitas_kerja }}">
                                     {{-- {!! getIcon('pencil', 'fs-2') !!} --}}
                                     <i class="ki-duotone ki-pencil fs-2">
                                         <span class="path1"></span>
@@ -225,16 +225,29 @@
 
                 $(document).on('click', '.btn-edit-karyawan', function () {
                     const id = $(this).data('id');
+
                     $('#edit_nik').val($(this).data('nik'));
                     $('#edit_nama').val($(this).data('nama'));
-                    $('#edit_umur').val($(this).data('umur'));
+                    $('#edit_usia').val($(this).data('usia'));
                     $('#edit_jenis_kelamin').val($(this).data('jenis_kelamin'));
                     $('#edit_pendidikan').val($(this).data('pendidikan'));
-                    $('#edit_jabatan').val($(this).data('jabatan'));
-                    $('#edit_lama_bekerja').val($(this).data('lama_bekerja'));
-                    $('#edit_jumlah_kehadiran').val($(this).data('jumlah_kehadiran'));
-                    $('#edit_nilai_produktivitas').val($(this).data('nilai_produktivitas'));
+                    $('#edit_jumlah_kehadiran').val($(this).data('kehadiran'));
                     $('#edit_penilaian').val($(this).data('penilaian'));
+                    $('#edit_jabatan').val($(this).data('jabatan'));
+                    $('#edit_produktivitas_kerja').val($(this).data('produktivitas_kerja'));
+
+                    const lamaBekerja = $(this).data('lama_bekerja');
+                    if (lamaBekerja) {
+                        const parts = lamaBekerja.trim().split(' ');
+                        const angka = parts[0] || '';
+                        const satuan = parts[1] || '';
+
+                        $('#edit_lama_bekerja_angka').val(angka);
+                        $('#edit_lama_bekerja_satuan').val(satuan.toUpperCase());
+                    } else {
+                        $('#edit_lama_bekerja_angka').val('');
+                        $('#edit_lama_bekerja_satuan').val('');
+                    }
 
                     $('#formEditKaryawan').attr('action', `/karyawan/${id}`);
                 });

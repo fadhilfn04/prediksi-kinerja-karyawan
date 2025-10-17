@@ -16,7 +16,7 @@ class Prediksi extends Model
         'jenis_kelamin',
         'pendidikan_terakhir',
         'lama_bekerja',
-        'jumlah_kehadiran',
+        'kehadiran',
         'jabatan',
         'prediksi',
     ];

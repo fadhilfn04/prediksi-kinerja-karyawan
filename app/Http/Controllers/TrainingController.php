@@ -25,13 +25,13 @@ class TrainingController extends Controller
                 'id',
                 'nik',
                 'nama',
-                'umur',
+                'usia',
                 'jenis_kelamin',
                 'pendidikan_terakhir',
                 'jabatan',
                 'lama_bekerja',
-                'jumlah_kehadiran',
-                'nilai_produktivitas',
+                'kehadiran',
+                'produktivitas_kerja',
                 'hasil_penilaian_kinerja_sebelumnya',
             )->get();
 
@@ -96,6 +96,12 @@ class TrainingController extends Controller
             $data = json_decode($json, true);
 
             foreach ($data as &$row) {
+                $row['lama_bekerja'] = $this->convertLamaBekerjaToMonths($row['lama_bekerja']);
+
+                if (!is_numeric($row['lama_bekerja'])) {
+                    $row['lama_bekerja'] = 0;
+                }
+
                 if ($row['hasil_penilaian_kinerja_sebelumnya'] >= 80) {
                     $row['label_kinerja'] = 'Baik';
                 } elseif ($row['hasil_penilaian_kinerja_sebelumnya'] >= 60) {
@@ -105,14 +111,10 @@ class TrainingController extends Controller
                 }
             }
 
-
             $attributes = [
-                'jabatan',
-                'umur',
-                'pendidikan_terakhir',
                 'lama_bekerja',
-                'jumlah_kehadiran',
-                'nilai_produktivitas',
+                'kehadiran',
+                'produktivitas_kerja',
             ];
 
             $tree = (new C45($data, 'label_kinerja'))->train($attributes);
@@ -124,12 +126,9 @@ class TrainingController extends Controller
 
             foreach ($data as $item) {
                 $input = [
-                    'jabatan' => $item['jabatan'],
-                    'umur' => $item['umur'],
-                    'pendidikan_terakhir' => $item['pendidikan_terakhir'],
                     'lama_bekerja' => $item['lama_bekerja'],
-                    'jumlah_kehadiran' => $item['jumlah_kehadiran'],
-                    'nilai_produktivitas' => $item['nilai_produktivitas'],
+                    'kehadiran' => $item['kehadiran'],
+                    'produktivitas_kerja' => $item['produktivitas_kerja'],
                 ];
 
                 $prediksi = $predictor->predict($input);
@@ -161,13 +160,33 @@ class TrainingController extends Controller
                 'tree' => $tree,
                 'accuracy' => $accuracyData
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat proses training: ' . $e->getMessage()
             ]);
         }
+    }
+
+    private function convertLamaBekerjaToMonths($value)
+    {
+        if (empty($value)) {
+            return 0;
+        }
+
+        $value = strtoupper(trim($value));
+        $years = 0;
+        $months = 0;
+
+        if (preg_match('/(\d+)\s*TAHUN/', $value, $matches)) {
+            $years = (int)$matches[1];
+        }
+
+        if (preg_match('/(\d+)\s*BULAN/', $value, $matches)) {
+            $months = (int)$matches[1];
+        }
+
+        return ($years * 12) + $months;
     }
 
     public function simpan()
