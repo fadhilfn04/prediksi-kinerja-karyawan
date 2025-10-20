@@ -5,12 +5,12 @@ namespace App\Services\DecisionTree;
 class C45
 {
     protected $data;
-    protected $targetAttribute;
+    protected $target;
 
-    public function __construct(array $data, string $targetAttribute)
+    public function __construct(array $data, string $target)
     {
         $this->data = $data;
-        $this->targetAttribute = $targetAttribute;
+        $this->target = $target;
     }
 
     public function train(array $attributes)
@@ -20,42 +20,51 @@ class C45
 
     protected function buildTree(array $data, array $attributes)
     {
-        $targetValues = array_column($data, $this->targetAttribute);
-        $uniqueTargets = array_unique($targetValues);
+        $labels = array_column($data, $this->target);
+        $uniqueLabels = array_unique($labels);
 
-        // 1. Semua target sama → daun
-        if (count($uniqueTargets) === 1) {
-            return $uniqueTargets[0];
+        if (count($uniqueLabels) === 1) {
+            return [
+                'type' => 'leaf',
+                'label' => $uniqueLabels[0]
+            ];
         }
 
-        // 2. Atribut habis → mayoritas
         if (empty($attributes)) {
-            return $this->majorityValue($targetValues);
+            return [
+                'type' => 'leaf',
+                'label' => $this->majorityLabel($labels)
+            ];
         }
 
-        // 3. Pilih atribut terbaik dengan Gain Ratio
-        $bestAttribute = $this->chooseBestAttribute($data, $attributes);
+        $best = $this->chooseBestAttribute($data, $attributes);
 
-        if ($bestAttribute === null) {
-            return $this->majorityValue($targetValues);
+        if (!$best) {
+            return [
+                'type' => 'leaf',
+                'label' => $this->majorityLabel($labels)
+            ];
         }
 
         $tree = [
-            'attribute' => $bestAttribute,
-            'branches' => []
+            'type' => 'node',
+            'attribute' => $best['attribute'],
         ];
 
-        // 4. Buat cabang untuk setiap nilai atribut
-        $attributeValues = array_unique(array_column($data, $bestAttribute));
+        if ($best['type'] === 'numeric') {
+            $tree['type'] = 'numeric';
+            $tree['threshold'] = $best['threshold'];
 
-        foreach ($attributeValues as $value) {
-            $subset = array_filter($data, fn($row) => $row[$bestAttribute] == $value);
+            $leftSplit = array_filter($data, fn($row) => $row[$best['attribute']] <= $best['threshold']);
+            $rightSplit = array_filter($data, fn($row) => $row[$best['attribute']] > $best['threshold']);
 
-            if (empty($subset)) {
-                $tree['branches'][$value] = $this->majorityValue($targetValues);
-            } else {
-                $remainingAttributes = array_diff($attributes, [$bestAttribute]);
-                $tree['branches'][$value] = $this->buildTree(array_values($subset), $remainingAttributes);
+            $tree['left'] = $this->buildTree($leftSplit, $attributes);
+            $tree['right'] = $this->buildTree($rightSplit, $attributes);
+        } else {
+            $tree['branches'] = [];
+            foreach ($best['values'] as $val) {
+                $subset = array_filter($data, fn($row) => $row[$best['attribute']] == $val);
+                $tree['branches'][$val] = $this->buildTree($subset, array_diff($attributes, [$best['attribute']]));
             }
         }
 
@@ -65,40 +74,50 @@ class C45
     protected function chooseBestAttribute(array $data, array $attributes)
     {
         $baseEntropy = $this->entropy($data);
-        $bestGainRatio = -INF;
-        $bestAttribute = null;
+        $bestGain = 0;
+        $best = null;
 
         foreach ($attributes as $attribute) {
-            $gain = $baseEntropy - $this->conditionalEntropy($data, $attribute);
-            $splitInfo = $this->splitInformation($data, $attribute);
+            $values = array_column($data, $attribute);
 
-            // Hindari pembagian dengan nol
-            if ($splitInfo == 0) {
-                continue;
-            }
-
-            $gainRatio = $gain / $splitInfo;
-
-            if ($gainRatio > $bestGainRatio) {
-                $bestGainRatio = $gainRatio;
-                $bestAttribute = $attribute;
+            if ($this->isNumericArray($values)) {
+                $thresholds = $this->generateThresholds($values);
+                foreach ($thresholds as $t) {
+                    $gain = $this->informationGainNumeric($data, $attribute, $t, $baseEntropy);
+                    if ($gain > $bestGain) {
+                        $bestGain = $gain;
+                        $best = [
+                            'attribute' => $attribute,
+                            'type' => 'numeric',
+                            'threshold' => $t
+                        ];
+                    }
+                }
+            } else {
+                $gain = $this->informationGainCategorical($data, $attribute, $baseEntropy);
+                if ($gain > $bestGain) {
+                    $bestGain = $gain;
+                    $best = [
+                        'attribute' => $attribute,
+                        'type' => 'categorical',
+                        'values' => array_unique($values)
+                    ];
+                }
             }
         }
 
-        return $bestAttribute;
+        return $best;
     }
 
     protected function entropy(array $data)
     {
-        $targetCounts = [];
-        foreach ($data as $row) {
-            $value = $row[$this->targetAttribute];
-            $targetCounts[$value] = ($targetCounts[$value] ?? 0) + 1;
-        }
-
-        $entropy = 0;
         $total = count($data);
-        foreach ($targetCounts as $count) {
+        if ($total === 0) return 0;
+
+        $counts = array_count_values(array_column($data, $this->target));
+        $entropy = 0;
+
+        foreach ($counts as $count) {
             $p = $count / $total;
             $entropy -= $p * log($p, 2);
         }
@@ -106,47 +125,58 @@ class C45
         return $entropy;
     }
 
-    protected function conditionalEntropy(array $data, string $attribute)
+    protected function informationGainCategorical(array $data, string $attribute, float $baseEntropy)
     {
-        $subsets = [];
-        foreach ($data as $row) {
-            $value = $row[$attribute];
-            $subsets[$value][] = $row;
-        }
-
         $total = count($data);
-        $entropy = 0;
+        $values = array_unique(array_column($data, $attribute));
+        $newEntropy = 0;
 
-        foreach ($subsets as $subset) {
-            $subsetSize = count($subset);
-            $entropy += ($subsetSize / $total) * $this->entropy($subset);
+        foreach ($values as $val) {
+            $subset = array_filter($data, fn($row) => $row[$attribute] == $val);
+            $p = count($subset) / $total;
+            $newEntropy += $p * $this->entropy($subset);
         }
 
-        return $entropy;
+        return $baseEntropy - $newEntropy;
     }
 
-    protected function splitInformation(array $data, string $attribute)
+    protected function informationGainNumeric(array $data, string $attribute, $threshold, float $baseEntropy)
     {
-        $valueCounts = [];
-        foreach ($data as $row) {
-            $value = $row[$attribute];
-            $valueCounts[$value] = ($valueCounts[$value] ?? 0) + 1;
-        }
-
         $total = count($data);
-        $splitInfo = 0;
+        $left = array_filter($data, fn($row) => $row[$attribute] <= $threshold);
+        $right = array_filter($data, fn($row) => $row[$attribute] > $threshold);
 
-        foreach ($valueCounts as $count) {
-            $p = $count / $total;
-            $splitInfo -= $p * log($p, 2);
-        }
+        $leftEntropy = $this->entropy($left);
+        $rightEntropy = $this->entropy($right);
 
-        return $splitInfo;
+        $newEntropy = (count($left) / $total) * $leftEntropy + (count($right) / $total) * $rightEntropy;
+        return $baseEntropy - $newEntropy;
     }
 
-    protected function majorityValue(array $values)
+    protected function generateThresholds(array $values)
     {
-        $counts = array_count_values($values);
+        $values = array_unique(array_map('floatval', $values));
+        sort($values);
+        $thresholds = [];
+
+        for ($i = 0; $i < count($values) - 1; $i++) {
+            $thresholds[] = ($values[$i] + $values[$i + 1]) / 2;
+        }
+
+        return $thresholds;
+    }
+
+    protected function isNumericArray(array $arr)
+    {
+        foreach ($arr as $v) {
+            if (!is_numeric($v)) return false;
+        }
+        return true;
+    }
+
+    protected function majorityLabel(array $labels)
+    {
+        $counts = array_count_values($labels);
         arsort($counts);
         return array_key_first($counts);
     }

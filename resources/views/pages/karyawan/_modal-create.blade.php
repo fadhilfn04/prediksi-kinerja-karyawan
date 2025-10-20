@@ -25,8 +25,8 @@
                         <!-- Jenis Kelamin -->
                         <div class="col-md-6 fv-row">
                             <label for="create_jenis_kelamin" class="form-label fw-semibold required">Jenis Kelamin</label>
-                            <select name="jenis_kelamin" id="create_jenis_kelamin" class="form-select form-select-solid" required>
-                                <option value="">Pilih Jenis Kelamin</option>
+                            <select class="form-select form-select-solid" name="jenis_kelamin" id="create_jenis_kelamin" data-kt-select2="true" data-placeholder="Pilih Jenis Kelamin" data-allow-clear="true" data-hide-search="true" required>
+                                <option></option>
                                 <option value="L">Laki-laki</option>
                                 <option value="P">Perempuan</option>
                             </select>
@@ -41,15 +41,22 @@
                         <!-- Pendidikan -->
                         <div class="col-md-6 fv-row">
                             <label for="create_pendidikan" class="form-label fw-semibold required">Pendidikan Terakhir</label>
-                            <input type="text" name="pendidikan_terakhir" id="create_pendidikan" class="form-control form-control-solid" required />
+                            <select class="form-select form-select-solid" name="pendidikan_terakhir" id="create_pendidikan" data-kt-select2="true" data-placeholder="Pilih Pendidikan Terakhir" data-allow-clear="true" data-hide-search="true" required>
+                                <option></option>
+                                <option value="SMP">SMP</option>
+                                <option value="SMA">SMA</option>
+                                <option value="D3">D3</option>
+                                <option value="D4">D4</option>
+                                <option value="S1">S1</option>
+                            </select>
                         </div>
 
                         <!-- Lama Bekerja -->
                         <div class="col-md-6 fv-row">
                             <label for="create_lama_bekerja" class="form-label fw-semibold required">Lama Bekerja</label>
                             <div class="d-flex gap-2">
-                                <select name="lama_bekerja_satuan" id="create_lama_bekerja_satuan" class="form-select form-select-solid" required>
-                                    <option value="">Pilih Satuan</option>
+                                <select class="form-select form-select-solid" name="lama_bekerja_satuan" id="create_lama_bekerja_satuan" data-kt-select2="true" data-placeholder="Pilih Satuan" data-allow-clear="true" data-hide-search="true" required>
+                                    <option></option>
                                     <option value="TAHUN">Tahun</option>
                                     <option value="BULAN">Bulan</option>
                                 </select>
@@ -72,16 +79,21 @@
                         <!-- Jabatan -->
                         <div class="col-md-6 fv-row">
                             <label for="create_jabatan" class="form-label fw-semibold required">Jabatan</label>
-                            <input type="text" name="jabatan" id="create_jabatan" class="form-control form-control-solid" required />
+                            <select class="form-select form-select-solid" name="jabatan" id="create_jabatan" data-kt-select2="true" data-placeholder="Pilih Jabatan" data-allow-clear="true" data-hide-search="true" required>
+                                <option></option>
+                                <option value="COS">COS</option>
+                                <option value="ACOS">ACOS</option>
+                                <option value="CREW">CREW</option>
+                            </select>
                         </div>
 
                         <!-- Nilai Produktivitas -->
                         <div class="col-md-6 fv-row">
                             <label for="create_nilai_produktivitas" class="form-label fw-semibold required">Produktivitas Kerja</label>
-                            <select name="produktivitas_kerja" id="create_produktivitas_kerja" class="form-select form-select-solid" required>
-                                <option value="">Pilih Produktivitas Kerja</option>
-                                <option value="Tercapai">Tercapai</option>
-                                <option value="Tidak Tercapai">Tidak Tercapai</option>
+                            <select class="form-select form-select-solid" name="produktivitas_kerja" id="create_produktivitas_kerja" data-kt-select2="true" data-placeholder="Pilih Produktivitas Kerja" data-allow-clear="true" data-hide-search="true" required>
+                                <option></option>
+                                <option value="TERCAPAI">TERCAPAI</option>
+                                <option value="TIDAK TERCAPAI">TIDAK TERCAPAI</option>
                             </select>
                         </div>
                     </div>

@@ -18,25 +18,52 @@ class Predictor
 
     protected function traverse($node, $input)
     {
-        // Kalau node sudah berupa string → ini leaf
-        if (is_string($node)) {
-            return $node;
+        if ($node['type'] === 'leaf') {
+            return $node['label'];
         }
 
-        $attribute = $node['attribute'] ?? null;
+        if ($node['type'] === 'numeric') {
+            $attr = $node['attribute'];
+            $threshold = $node['threshold'];
 
-        if (!$attribute || !isset($input[$attribute])) {
-            // Jika atribut tidak ada di input → fallback majority
-            return 'Tidak diketahui';
+            if (!isset($input[$attr])) {
+                return null;
+            }
+
+            if ($input[$attr] <= $threshold) {
+                return $this->traverse($node['left'], $input);
+            } else {
+                return $this->traverse($node['right'], $input);
+            }
         }
 
-        $value = $input[$attribute];
-
-        if (isset($node['branches'][$value])) {
-            return $this->traverse($node['branches'][$value], $input);
-        } else {
-            // Kalau nilai tidak cocok dengan cabang → fallback
-            return 'Tidak diketahui';
+        if ($node['type'] === 'node') {
+            $attr = $node['attribute'];
+            $val = $input[$attr] ?? null;
+            if (isset($node['branches'][$val])) {
+                return $this->traverse($node['branches'][$val], $input);
+            } else {
+                // fallback ke mayoritas cabang
+                return $this->fallbackLabel($node['branches']);
+            }
         }
+
+        return null;
+    }
+
+    protected function fallbackLabel($branches)
+    {
+        $labels = [];
+        foreach ($branches as $branch) {
+            if ($branch['type'] === 'leaf') {
+                $labels[] = $branch['label'];
+            }
+        }
+
+        if (empty($labels)) return null;
+
+        $counts = array_count_values($labels);
+        arsort($counts);
+        return array_key_first($counts);
     }
 }

@@ -86,21 +86,20 @@
                             <td class="d-flex justify-content-between">
                                 <!-- Tombol Edit (buka modal) -->
                                 <button type="button" 
-                                        class="btn btn-sm btn-light-warning me-1 btn-edit-karyawan" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#modalEditKaryawan"
-                                        data-id="{{ $k->id }}"
-                                        data-nik="{{ $k->nik }}"
-                                        data-nama="{{ $k->nama }}"
-                                        data-usia="{{ $k->usia }}"
-                                        data-jenis_kelamin="{{ $k->jenis_kelamin }}"
-                                        data-pendidikan="{{ $k->pendidikan_terakhir }}"
-                                        data-lama_bekerja="{{ $k->lama_bekerja }}"
-                                        data-kehadiran="{{ $k->kehadiran }}"
-                                        data-penilaian="{{ $k->hasil_penilaian_kinerja_sebelumnya }}"
-                                        data-jabatan="{{ $k->jabatan }}"
-                                        data-produktivitas_kerja="{{ $k->produktivitas_kerja }}">
-                                    {{-- {!! getIcon('pencil', 'fs-2') !!} --}}
+                                    class="btn btn-sm btn-light-warning me-1 btn-edit-karyawan" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#modalEditKaryawan"
+                                    data-id="{{ $k->id }}"
+                                    data-nik="{{ $k->nik }}"
+                                    data-nama="{{ $k->nama }}"
+                                    data-usia="{{ $k->usia }}"
+                                    data-jenis_kelamin="{{ $k->jenis_kelamin }}"
+                                    data-pendidikan="{{ $k->pendidikan_terakhir }}"
+                                    data-lama_bekerja="{{ $k->lama_bekerja }}"
+                                    data-kehadiran="{{ $k->kehadiran }}"
+                                    data-penilaian="{{ $k->hasil_penilaian_kinerja_sebelumnya }}"
+                                    data-jabatan="{{ $k->jabatan }}"
+                                    data-produktivitas_kerja="{{ $k->produktivitas_kerja }}">
                                     <i class="ki-duotone ki-pencil fs-2">
                                         <span class="path1"></span>
                                         <span class="path2"></span>
@@ -229,12 +228,12 @@
                     $('#edit_nik').val($(this).data('nik'));
                     $('#edit_nama').val($(this).data('nama'));
                     $('#edit_usia').val($(this).data('usia'));
-                    $('#edit_jenis_kelamin').val($(this).data('jenis_kelamin'));
-                    $('#edit_pendidikan').val($(this).data('pendidikan'));
+                    $('#edit_jenis_kelamin').val($(this).data('jenis_kelamin').toUpperCase()).trigger('change');
+                    $('#edit_pendidikan').val($(this).data('pendidikan').toUpperCase()).trigger('change');
                     $('#edit_jumlah_kehadiran').val($(this).data('kehadiran'));
                     $('#edit_penilaian').val($(this).data('penilaian'));
-                    $('#edit_jabatan').val($(this).data('jabatan'));
-                    $('#edit_produktivitas_kerja').val($(this).data('produktivitas_kerja'));
+                    $('#edit_jabatan').val($(this).data('jabatan').toUpperCase()).trigger('change');
+                    $('#edit_produktivitas_kerja').val($(this).data('produktivitas_kerja').toUpperCase()).trigger('change');
 
                     const lamaBekerja = $(this).data('lama_bekerja');
                     if (lamaBekerja) {
@@ -243,7 +242,7 @@
                         const satuan = parts[1] || '';
 
                         $('#edit_lama_bekerja_angka').val(angka);
-                        $('#edit_lama_bekerja_satuan').val(satuan.toUpperCase());
+                        $('#edit_lama_bekerja_satuan').val(satuan.toUpperCase()).trigger('change');
                     } else {
                         $('#edit_lama_bekerja_angka').val('');
                         $('#edit_lama_bekerja_satuan').val('');

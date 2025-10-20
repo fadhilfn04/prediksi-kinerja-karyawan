@@ -24,7 +24,7 @@ class KaryawanSeeder extends Seeder
                 'jabatan' => $faker->randomElement(['COS', 'ACOS', 'CREW']),
                 'lama_bekerja' => $faker->randomElement(['10 TAHUN', '5 TAHUN', '3 TAHUN', '1 TAHUN', '6 BULAN', '3 BULAN']),
                 'kehadiran' => $faker->numberBetween(20, 100),
-                'produktivitas_kerja' => $faker->randomElement(['Tidak Tercapai', 'Tercapai']),
+                'produktivitas_kerja' => $faker->randomElement(['TIDAK TERCAPAI', 'TERCAPAI']),
                 'hasil_penilaian_kinerja_sebelumnya' => $faker->randomFloat(2, 50, 100),
                 'usia' => $faker->numberBetween(20, 60),
             ]);

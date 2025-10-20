@@ -33,7 +33,7 @@ class KaryawanController extends Controller
             'kehadiran' => 'required|integer|min:0|max:260',
             'hasil_penilaian_kinerja_sebelumnya' => 'required|numeric|min:0|max:100',
             'jabatan' => 'required|string|max:255',
-            'produktivitas_kerja' => 'required|in:Tercapai,Tidak Tercapai',
+            'produktivitas_kerja' => 'required|in:TERCAPAI,TIDAK TERCAPAI',
         ]);
 
         $lamaBekerja = $validated['lama_bekerja_angka'] . ' ' . $validated['lama_bekerja_satuan'];
@@ -72,7 +72,7 @@ class KaryawanController extends Controller
             'kehadiran' => 'required|integer|min:0|max:260',
             'hasil_penilaian_kinerja_sebelumnya' => 'required|numeric|min:0|max:100',
             'jabatan' => 'required|string|max:255',
-            'produktivitas_kerja' => 'required|in:Tercapai,Tidak Tercapai',
+            'produktivitas_kerja' => 'required|in:TERCAPAI,TIDAK TERCAPAI',
         ]);
 
         $lamaBekerja = $validated['lama_bekerja_angka'] . ' ' . $validated['lama_bekerja_satuan'];
