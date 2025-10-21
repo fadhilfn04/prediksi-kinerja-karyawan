@@ -97,18 +97,35 @@ class TrainingController extends Controller
 
             foreach ($data as &$row) {
                 $row['lama_bekerja'] = $this->convertLamaBekerjaToMonths($row['lama_bekerja']);
-
                 if (!is_numeric($row['lama_bekerja'])) {
                     $row['lama_bekerja'] = 0;
                 }
 
-                if ($row['hasil_penilaian_kinerja_sebelumnya'] >= 80) {
+                $prevScore = isset($row['hasil_penilaian_kinerja_sebelumnya']) && is_numeric($row['hasil_penilaian_kinerja_sebelumnya'])
+                    ? floatval($row['hasil_penilaian_kinerja_sebelumnya']) : 0;
+
+                $prod = strtoupper(trim($row['produktivitas_kerja'] ?? ''));
+                $prodScore = ($prod === 'TERCAPAI') ? 100.0 : 0.0;
+
+                $expectedDays = 26; 
+                $hadirDays = is_numeric($row['kehadiran']) ? floatval($row['kehadiran']) : 0;
+                $attendancePercent = min(100, ($hadirDays / $expectedDays) * 100);
+
+                $wPrev = 0.5;
+                $wProd = 0.3;
+                $wAttend = 0.2;
+
+                $totalScore = ($prevScore * $wPrev) + ($prodScore * $wProd) + ($attendancePercent * $wAttend);
+
+                if ($totalScore >= 80) {
                     $row['label_kinerja'] = 'Baik';
-                } elseif ($row['hasil_penilaian_kinerja_sebelumnya'] >= 60) {
+                } elseif ($totalScore >= 60) {
                     $row['label_kinerja'] = 'Cukup';
                 } else {
                     $row['label_kinerja'] = 'Kurang';
                 }
+
+                $row['composite_score'] = round($totalScore, 2);
             }
 
             $attributes = [
@@ -160,6 +177,7 @@ class TrainingController extends Controller
                 'tree' => $tree,
                 'accuracy' => $accuracyData
             ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
