@@ -23,9 +23,9 @@ Breadcrumbs::for('karyawan.index', function (BreadcrumbTrail $trail) {
 });
 
 // Home > Dashboard > Training Model
-Breadcrumbs::for('training.index', function (BreadcrumbTrail $trail) {
+Breadcrumbs::for('trainings.index', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
-    $trail->push('Training Model', route('training.index'));
+    $trail->push('Training Model', route('trainings.index'));
 });
 
 // Home > Dashboard > Prediksi Kinerja Karyawan

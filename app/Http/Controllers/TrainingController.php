@@ -82,106 +82,143 @@ class TrainingController extends Controller
         }
     }
 
+    // public function proses()
+    // {
+    //     try {
+    //         if (!Storage::disk('local')->exists('training/data.json')) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Data training belum tersedia.'
+    //             ]);
+    //         }
+
+    //         $json = Storage::disk('local')->get('training/data.json');
+    //         $data = json_decode($json, true);
+
+    //         foreach ($data as &$row) {
+    //             $row['lama_bekerja'] = $this->convertLamaBekerjaToMonths($row['lama_bekerja']);
+    //             if (!is_numeric($row['lama_bekerja'])) {
+    //                 $row['lama_bekerja'] = 0;
+    //             }
+
+    //             $prevScore = isset($row['hasil_penilaian_kinerja_sebelumnya']) && is_numeric($row['hasil_penilaian_kinerja_sebelumnya'])
+    //                 ? floatval($row['hasil_penilaian_kinerja_sebelumnya']) : 0;
+
+    //             $prod = strtoupper(trim($row['produktivitas_kerja'] ?? ''));
+    //             $prodScore = ($prod === 'TERCAPAI') ? 100.0 : 0.0;
+
+    //             $expectedDays = 26; 
+    //             $hadirDays = is_numeric($row['kehadiran']) ? floatval($row['kehadiran']) : 0;
+    //             $attendancePercent = min(100, ($hadirDays / $expectedDays) * 100);
+
+    //             $wPrev = 0.5;
+    //             $wProd = 0.3;
+    //             $wAttend = 0.2;
+
+    //             $totalScore = ($prevScore * $wPrev) + ($prodScore * $wProd) + ($attendancePercent * $wAttend);
+
+    //             if ($totalScore >= 80) {
+    //                 $row['label_kinerja'] = 'Baik';
+    //             } elseif ($totalScore >= 60) {
+    //                 $row['label_kinerja'] = 'Cukup';
+    //             } else {
+    //                 $row['label_kinerja'] = 'Kurang';
+    //             }
+
+    //             $row['composite_score'] = round($totalScore, 2);
+    //         }
+
+    //         $attributes = [
+    //             'lama_bekerja',
+    //             'kehadiran',
+    //             'produktivitas_kerja',
+    //         ];
+
+    //         $tree = (new C45($data, 'label_kinerja'))->train($attributes);
+    //         Storage::disk('local')->put('training/model.json', json_encode($tree, JSON_PRETTY_PRINT));
+
+    //         $predictor = new Predictor($tree);
+    //         $total = count($data);
+    //         $benar = 0;
+
+    //         foreach ($data as $item) {
+    //             $input = [
+    //                 'lama_bekerja' => $item['lama_bekerja'],
+    //                 'kehadiran' => $item['kehadiran'],
+    //                 'produktivitas_kerja' => $item['produktivitas_kerja'],
+    //             ];
+
+    //             $prediksi = $predictor->predict($input);
+    //             if ($prediksi === $item['label_kinerja']) {
+    //                 $benar++;
+    //             }
+
+    //             $karyawan = Karyawan::find($item['id']);
+    //             if ($karyawan) {
+    //                 $karyawan->prediksi = $prediksi;
+    //                 $karyawan->tanggal_prediksi = Carbon::now();
+    //                 $karyawan->save();
+    //             }
+    //         }
+
+    //         $akurasi = $total > 0 ? round(($benar / $total) * 100, 2) : 0;
+
+    //         $accuracyData = [
+    //             'accuracy' => $akurasi,
+    //             'total_data' => $total,
+    //             'benar' => $benar,
+    //             'tanggal' => now()->toDateTimeString()
+    //         ];
+    //         Storage::disk('local')->put('training/accuracy.json', json_encode($accuracyData, JSON_PRETTY_PRINT));
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Proses training dengan algoritma Decision Tree berhasil!',
+    //             'tree' => $tree,
+    //             'accuracy' => $accuracyData
+    //         ]);
+
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Terjadi kesalahan saat proses training: ' . $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
     public function proses()
     {
         try {
-            if (!Storage::disk('local')->exists('training/data.json')) {
+            $script = base_path('python/train.py');
+
+            if (!file_exists($script)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Data training belum tersedia.'
+                    'message' => 'Script Python tidak ditemukan!'
                 ]);
             }
 
-            $json = Storage::disk('local')->get('training/data.json');
-            $data = json_decode($json, true);
+            $output = shell_exec("python3 $script");
+            $result = json_decode($output, true);
 
-            foreach ($data as &$row) {
-                $row['lama_bekerja'] = $this->convertLamaBekerjaToMonths($row['lama_bekerja']);
-                if (!is_numeric($row['lama_bekerja'])) {
-                    $row['lama_bekerja'] = 0;
-                }
-
-                $prevScore = isset($row['hasil_penilaian_kinerja_sebelumnya']) && is_numeric($row['hasil_penilaian_kinerja_sebelumnya'])
-                    ? floatval($row['hasil_penilaian_kinerja_sebelumnya']) : 0;
-
-                $prod = strtoupper(trim($row['produktivitas_kerja'] ?? ''));
-                $prodScore = ($prod === 'TERCAPAI') ? 100.0 : 0.0;
-
-                $expectedDays = 26; 
-                $hadirDays = is_numeric($row['kehadiran']) ? floatval($row['kehadiran']) : 0;
-                $attendancePercent = min(100, ($hadirDays / $expectedDays) * 100);
-
-                $wPrev = 0.5;
-                $wProd = 0.3;
-                $wAttend = 0.2;
-
-                $totalScore = ($prevScore * $wPrev) + ($prodScore * $wProd) + ($attendancePercent * $wAttend);
-
-                if ($totalScore >= 80) {
-                    $row['label_kinerja'] = 'Baik';
-                } elseif ($totalScore >= 60) {
-                    $row['label_kinerja'] = 'Cukup';
-                } else {
-                    $row['label_kinerja'] = 'Kurang';
-                }
-
-                $row['composite_score'] = round($totalScore, 2);
+            if (!$result || !isset($result['success'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Python tidak mengembalikan response.',
+                    'raw_output' => $output
+                ]);
             }
-
-            $attributes = [
-                'lama_bekerja',
-                'kehadiran',
-                'produktivitas_kerja',
-            ];
-
-            $tree = (new C45($data, 'label_kinerja'))->train($attributes);
-            Storage::disk('local')->put('training/model.json', json_encode($tree, JSON_PRETTY_PRINT));
-
-            $predictor = new Predictor($tree);
-            $total = count($data);
-            $benar = 0;
-
-            foreach ($data as $item) {
-                $input = [
-                    'lama_bekerja' => $item['lama_bekerja'],
-                    'kehadiran' => $item['kehadiran'],
-                    'produktivitas_kerja' => $item['produktivitas_kerja'],
-                ];
-
-                $prediksi = $predictor->predict($input);
-                if ($prediksi === $item['label_kinerja']) {
-                    $benar++;
-                }
-
-                $karyawan = Karyawan::find($item['id']);
-                if ($karyawan) {
-                    $karyawan->prediksi = $prediksi;
-                    $karyawan->tanggal_prediksi = Carbon::now();
-                    $karyawan->save();
-                }
-            }
-
-            $akurasi = $total > 0 ? round(($benar / $total) * 100, 2) : 0;
-
-            $accuracyData = [
-                'accuracy' => $akurasi,
-                'total_data' => $total,
-                'benar' => $benar,
-                'tanggal' => now()->toDateTimeString()
-            ];
-            Storage::disk('local')->put('training/accuracy.json', json_encode($accuracyData, JSON_PRETTY_PRINT));
 
             return response()->json([
-                'success' => true,
-                'message' => 'Proses training dengan algoritma Decision Tree berhasil!',
-                'tree' => $tree,
-                'accuracy' => $accuracyData
+                'success' => $result['success'],
+                'message' => $result['message'],
+                'accuracy' => $result['accuracy'] ?? null,
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat proses training: ' . $e->getMessage()
+                'message' => 'Gagal memproses training: ' . $e->getMessage()
             ]);
         }
     }

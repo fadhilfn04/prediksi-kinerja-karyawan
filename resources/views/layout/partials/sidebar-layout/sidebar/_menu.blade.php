@@ -37,7 +37,7 @@
 
 			<!--begin: Training Model-->
 			<div class="menu-item">
-				<a class="menu-link {{ request()->routeIs('training.*') ? 'active' : '' }}" href="{{ route('training.index') }}">
+				<a class="menu-link {{ request()->routeIs('trainings.*') ? 'active' : '' }}" href="{{ route('trainings.index') }}">
 					<span class="menu-icon">{!! getIcon('chart-line', 'fs-2') !!}</span>
 					<span class="menu-title">Training Model</span>
 				</a>

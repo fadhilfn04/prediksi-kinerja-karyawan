@@ -30,8 +30,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('karyawan', KaryawanController::class);
     Route::post('/karyawan/import', [KaryawanController::class, 'import'])->name('karyawan.import');
 
-    Route::prefix('training')->group(function () {
-        Route::get('/', [TrainingController::class, 'index'])->name('training.index');
+    Route::prefix('trainings')->group(function () {
+        Route::get('/', [TrainingController::class, 'index'])->name('trainings.index');
         Route::get('/ambil-data', [TrainingController::class, 'ambilData']);
         Route::get('/return-data', [TrainingController::class, 'returnData']);
         Route::get('/proses', [TrainingController::class, 'proses']);

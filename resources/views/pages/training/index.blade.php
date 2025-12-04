@@ -2,7 +2,7 @@
     @section('title', 'Training Model - Decision Tree')
 
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('training.index') }}
+        {{ Breadcrumbs::render('trainings.index') }}
     @endsection
 
     <div class="card">
@@ -67,7 +67,7 @@
 
     @push('scripts')
         <script>
-            const baseUrl = "{{ url('training') }}";
+            const baseUrl = "{{ url('trainings') }}";
             const stepStatus = document.getElementById('stepStatus');
             const tableHead = document.querySelector('#training_table thead');
             const tableBody = document.querySelector('#training_table tbody');
